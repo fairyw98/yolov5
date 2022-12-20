@@ -52,9 +52,9 @@ class Unit(nn.Module):
 
         # Device
         x = self.EnCoder(x)
+        # print(self.quantization)
         if self.quantization > 0:
             x.data = Quant(detach_x=x.detach(),quant_bits=self.quantization)
-
         # Cloud
         x = upsample(x)
         x = self.DeCoder(x)

@@ -1,0 +1,3 @@
+database_csv: 'database.csv'
+# results = (mp, mr, map50, map, *(loss.cpu() / len(dataloader)).tolist())
+results: (0, 0, 0, 0, 100)

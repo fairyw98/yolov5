@@ -25,6 +25,8 @@ from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 
+# import utils.config as config
+
 import numpy as np
 import torch
 import torch.distributed as dist
@@ -425,11 +427,19 @@ def train(hyp, opt, device, callbacks):  # hyp is path/to/hyp.yaml or hyp dictio
                         callbacks.run('on_fit_epoch_end', list(mloss) + list(results) + lr, epoch, best_fitness, fi)
 
         callbacks.run('on_train_end', last, best, epoch, results)
-    with open('database.txt','a+') as f:
-        f.write(str(results))
-        f.write('\n')
+
+    yaml_path = "config.yaml"
+    from random_search import read_yaml, change_yaml_train, write_yaml
+    content = read_yaml(yaml_path)
+    content = change_yaml_train(content,results)
+    write_yaml(yaml_path,content)
+
+    #     f.write('\n')
+    #     config.best_acc = best_acc
+    # config.results = results
+    # print(config.results)
     torch.cuda.empty_cache()
-    return results
+    # return results
 
 
 def parse_opt(known=False):
