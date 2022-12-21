@@ -42,10 +42,12 @@ def trick1(database_path,scheme):
 # define an objective function
 def objective(args):
     scheme = args
-    yaml_path = "config.yaml"
-    content = read_yaml(yaml_path)
-    # content = change_yaml(content,scheme)
-    # write_yaml(yaml_path,content)
+    config_yaml_path = "config.yaml"
+    results = (0,0,0,0,100)
+    content = read_yaml(config_yaml_path)
+    content = change_yaml_train(content,results)
+    write_yaml(config_yaml_path,content)
+
     config = content
     database_path = config['database_csv']
 
@@ -68,10 +70,10 @@ def objective(args):
 
     os.system(f'python train.py \
                                 --cfg {yaml_path} \
-                                --epochs 2')
+                                --epochs 500')
 
-    yaml_path = "config.yaml"
-    content = read_yaml(yaml_path)
+    config_yaml_path = "config.yaml"
+    content = read_yaml(config_yaml_path)
     # content = change_yaml(content,scheme)
     # write_yaml(yaml_path,content)
 
@@ -107,8 +109,8 @@ def change_yaml(content,scheme):
 def change_yaml_train(content,res):
     # res = (1,2,3,4,5)
     tmp = content['results']
-    print(tmp)
-    print(res)
+    # print(tmp)
+    # print(res)
     tmp[0] = float(res[0])
     tmp[1] = float(res[1])
     tmp[2] = float(res[2])
