@@ -16,11 +16,18 @@ from hyperopt import hp
 from hyperopt import fmin, tpe, space_eval,rand,anneal
 
 space = [
-    hp.choice('partition_id',[0,1,3,5,7]), # 3
-    hp.choice('quant_bits',[-1,1,2,4,8]), # 6
+    hp.choice('partition_id',[0,1,3]), # 3
+    hp.choice('quant_bits',[-1,1,2,4,8]), # 5
     hp.choice('coder_channels',[1,2,4,8,16,32,64]), # 7
     hp.choice('en_stide',[1,2,3,5,6,7,9]), # 7
 ]
+
+# space = [
+#     hp.choice('partition_id',[1]), # 3
+#     hp.choice('quant_bits',[-1]), # 6
+#     hp.choice('coder_channels',[16]), # 7
+#     hp.choice('en_stide',[5]), # 7
+# ]
 
 def trick1(database_path,scheme):
     df1 = pd.read_csv(database_path).copy()

@@ -42,7 +42,6 @@ class Unit(nn.Module):
             self.quantization = -1
         coder_channels = coder_channels
         en_stride =en_stride
-
         self.EnCoder = nn.Conv2d(in_channels=c2, out_channels= coder_channels, kernel_size=3,stride = en_stride)
         self.DeCoder = nn.Conv2d(in_channels=coder_channels, out_channels=c2, kernel_size=3,stride=1)
 
