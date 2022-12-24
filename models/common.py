@@ -143,6 +143,45 @@ class wfz_Conv_compression(nn.Module):
             h_factor = (h_out-1)*De_stride-2*De_padding+De_kernel_size
         return (w_factor,h_factor)
 
+
+class wfz_C3_compression(nn.Module):
+    # Standard convolution
+    def __init__(self, c1, c2, quant_bits = -3, coder_channels = 8,en_stride = 1, k=1, s=1, p=None, g=1, act=True):  # ch_in, ch_out, kernel, stride, padding, groups
+        super().__init__()
+        self.conv = nn.Conv2d(c1, c2, k, s, autopad(k, p), groups=g, bias=False)
+        self.bn = nn.BatchNorm2d(c2)
+        self.act = nn.SiLU() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
+
+        if quant_bits == -2:
+            fn = sw_Unit
+        elif quant_bits == -3:
+            self.unit = nn.Identity()  
+        else :
+            fn = Unit   
+        self.unit = fn(c2=c1,coder_channels=coder_channels,en_stride=en_stride,quant_bits=quant_bits)
+
+    def forward(self, x):
+        x = self.unit(x)
+        x = self.act(self.bn(self.conv(x)))
+
+        return x
+
+    def forward_fuse(self, x):
+        x = self.act(self.conv(x))
+
+        return x
+
+    def _get_upsample_factor(self,x):
+        with torch.no_grad():
+            w_out = x.shape[2]
+            h_out = x.shape[3]
+            De_stride = 1
+            De_kernel_size = 3
+            De_padding = 0
+            w_factor = (w_out-1)*De_stride-2*De_padding+De_kernel_size
+            h_factor = (h_out-1)*De_stride-2*De_padding+De_kernel_size
+        return (w_factor,h_factor)
+
 def autopad(k, p=None, d=1):  # kernel, padding, dilation
     # Pad to 'same' shape outputs
     if d > 1:

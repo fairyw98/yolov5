@@ -329,6 +329,10 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
             c1, c2, quantization_bit,coder_channels,en_stride = ch[f], args[0],args[1],args[2],args[3]
             c2=int(c2)
             args = [c1, c2, quantization_bit,coder_channels,en_stride,*args[4:]]
+        elif m in [wfz_C3_compression]:
+            c1, c2, quantization_bit,coder_channels,en_stride = ch[f], args[0],args[1],args[2],args[3]
+            c2=int(c2)
+            args = [c1, c2, quantization_bit,coder_channels,en_stride,*args[4:]]
         elif m is nn.BatchNorm2d:
             args = [ch[f]]
         elif m is Concat:

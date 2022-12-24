@@ -16,17 +16,17 @@ from hyperopt import hp
 from hyperopt import fmin, tpe, space_eval,rand,anneal
 
 space = [
-    hp.choice('partition_id',[0,1,3]), # 3
+    hp.choice('partition_id',[0,1,2,3,4]), # 3
     hp.choice('quant_bits',[-1,1,2,4,8]), # 5
     hp.choice('coder_channels',[1,2,4,8,16,32,64]), # 7
     hp.choice('en_stide',[1,2,3,5,6,7,9]), # 7
 ]
 
 # space = [
-#     hp.choice('partition_id',[1]), # 3
-#     hp.choice('quant_bits',[-1]), # 6
-#     hp.choice('coder_channels',[16]), # 7
-#     hp.choice('en_stide',[5]), # 7
+#     hp.choice('partition_id',[0]), # 3
+#     hp.choice('quant_bits',[8]), # 6
+#     hp.choice('coder_channels',[2]), # 7
+#     hp.choice('en_stide',[1]), # 7
 # ]
 
 def trick1(database_path,scheme):
@@ -100,15 +100,31 @@ def read_yaml(yaml_path):
     return content
 
 def change_yaml(content,scheme):
-    tmp = content['backbone'][scheme[0]]
-    tmp[2] = 'wfz_Conv_compression'
-    param = []
+    if scheme[0] in {0,1,3}:
+        tmp = content['backbone'][scheme[0]]
+        tmp[2] = 'wfz_Conv_compression'
+        param = []
 
-    param.extend([tmp[3][-3]])
-    param.extend(scheme[1:])
-    param.extend(tmp[3][-2:])
+        # param.extend([tmp[3][-3]])
+        # param.extend(scheme[1:])
+        # param.extend(tmp[3][-2:])
 
-    tmp[3] = param
+        param.extend([tmp[3][0]])
+        param.extend(scheme[1:])
+        param.extend(tmp[3][1:])
+
+        tmp[3] = param
+    elif scheme[0] in {2, 4}:
+        tmp = content['backbone'][scheme[0]+1]
+        tmp[2] = 'wfz_C3_compression'
+        param = []
+
+        param.extend([tmp[3][0]])
+        param.extend(scheme[1:])
+        param.extend(tmp[3][1:])
+
+        tmp[3] = param   
+
 
     return content
 

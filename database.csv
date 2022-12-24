@@ -1,0 +1,2 @@
+partition_id,quant_bits,coder_channels,en_stride,map50,loss
+2,8,64,5,0.0,100.0
